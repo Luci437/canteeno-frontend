@@ -1,6 +1,16 @@
 import { Button } from "../Common/Button";
 import { InputBox } from "../Common/Input";
 
+export type CategoryType = {
+  categoryId: number;
+  name: string;
+  description: string;
+  createdBy: string;
+  createdAt: string; // Consider using `Date` if you plan to handle date objects
+  updatedBy: string;
+  updatedAt: string; // Consider using `Date` if you plan to handle date objects
+};
+
 export const AddCategories = () => {
   return (
     <>

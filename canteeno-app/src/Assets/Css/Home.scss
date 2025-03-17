@@ -47,9 +47,9 @@ $Standard-radius: 0.5em;
     border-radius: $Standard-radius;
 
     .menu-title-name {
-      color: black;
+      color: #4a4a4a;
       padding: 1em 0 0 0.4em;
-      font-size: 1.4em;
+      font-size: 1.8em !important;
     }
 
     .dish-container {
@@ -79,18 +79,26 @@ $Standard-radius: 0.5em;
         object-fit: cover;
         border-radius: $Standard-radius;
       }
-      h3 {
+      .item-name {
         font-size: 1em;
         color: rgb(137, 137, 137);
         text-overflow: ellipsis;
-        overflow: hidden;
         white-space: nowrap;
         max-width: 90%;
         font-weight: 600;
       }
-      p {
-        color: rgb(69, 69, 69);
-        font-weight: 800;
+      // p {
+      //   color: rgb(69, 69, 69);
+      //   font-weight: 800;
+      // }
+      .price {
+        font-weight: bold;
+        color: #212121; /* Dark black for clear visibility */
+        font-size: 16px;
+      }
+
+      .price .currency {
+        color: #388e3c; /* Fresh green for ₹ symbol */
       }
       .cart-container {
         border: 3px solid #f5f4f7;
@@ -325,6 +333,7 @@ $Standard-radius: 0.5em;
 .admin-content-entry-section-inner-form {
   display: flex;
   flex-direction: column;
+  gap: 1em;
 }
 
 .admin-table {
