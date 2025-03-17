@@ -1,15 +1,19 @@
+import { NavLink } from "react-router";
 import { CartItem } from "./CartItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLeftLong } from "@fortawesome/free-solid-svg-icons";
 
 export const CartHome = () => {
   return (
     <>
+      <div className="header-container">
+        <NavLink to="/">
+          <FontAwesomeIcon icon={faLeftLong} className="back-button" />
+        </NavLink>
+      </div>
       <div className="cart-home-container">
         <h2 className="cart-title-name">Food Cart</h2>
         <div className="cart-item-list">
-          <CartItem />
-          <CartItem />
-          <CartItem />
-          <CartItem />
           <CartItem />
           <CartItem />
         </div>

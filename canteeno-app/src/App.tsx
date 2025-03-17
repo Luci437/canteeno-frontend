@@ -6,6 +6,7 @@ import { AdminHome } from "./Components/Admin/AdminHome";
 import { Home } from "./Components/User/Home";
 import { CartHome } from "./Components/User/Cart/CartHome";
 import { UserProfile } from "./Components/User/UserProfile";
+import { OrderSuccess } from "./Components/User/Cart/OrderSuccess";
 
 const App = () => {
   UseDeviceType();
@@ -13,6 +14,7 @@ const App = () => {
     <div className="App">
       <Routes>
         <Route path="/login" element={<UserAuth />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/user" element={<UserProfile />} />
         <Route path="/signup" element={<UserAuth />} />
         <Route path="/admin/*" element={<AdminHome />} />

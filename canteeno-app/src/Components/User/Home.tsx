@@ -2,14 +2,16 @@ import { NavLink } from "react-router";
 import "../../Assets/Css/Home.scss";
 import { CartButton } from "./CartButton";
 import { ItemContainer } from "./ItemContainer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 export const Home = () => {
   return (
     <div className="home-container">
-      <span>
+      <span className="home-container-span">
         <h1 className="site-title-name">Canteeno</h1>
         <NavLink to={"/user"} className="site-profie">
-          Appu
+          <FontAwesomeIcon icon={faUser} /> Appu
         </NavLink>
       </span>
       <div className="image-slider-container"></div>

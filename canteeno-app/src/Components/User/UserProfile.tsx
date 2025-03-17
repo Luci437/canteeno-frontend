@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLeftLong, faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { NavLink } from "react-router";
 
 const orders = [
   { id: "ORD123", items: ["Pizza", "Burger", "Pasta"] },
@@ -15,8 +18,7 @@ export const UserProfile = () => {
     switch (activeTab) {
       case "profile":
         return <p>User Info: John Doe | johndoe@gmail.com</p>;
-      case "address":
-        return <p>Address: 123, Food Street, Bangalore</p>;
+
       case "orders":
         return (
           <div className="order-list">
@@ -34,8 +36,14 @@ export const UserProfile = () => {
 
   return (
     <div className="container">
+      <div className="header-container">
+        <NavLink to="/">
+          <FontAwesomeIcon icon={faLeftLong} className="back-button" />
+        </NavLink>
+      </div>
+      <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
       <div className="tabs">
-        {["profile", "address", "orders"].map((tab) => (
+        {["profile", "orders"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
