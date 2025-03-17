@@ -33,7 +33,7 @@ export type ItemResponseType = {
   description: string;
   imageUrls: string[];
   itemId: number;
-  itemStock: ItemStockType;
+  itemStock?: ItemStockType;
   name: string;
   price: number;
   store: StoreType;

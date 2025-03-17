@@ -5,6 +5,7 @@ import { AddStore } from "../Store/AddStore";
 import { NavMenus } from "./NavMenus";
 import { useEffect } from "react";
 import { OrderHome } from "../Orders/OrderHome";
+import { StockHome } from "../Stock/StockHome";
 
 export const AdminHome = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export const AdminHome = () => {
             <Route path="/addItems" element={<AddItems />} />
             <Route path="/addCategories" element={<AddCategories />} />
             <Route path="/addStore" element={<AddStore />} />
+            <Route path="/addStock" element={<StockHome />} />
           </Routes>
         </div>
       </div>

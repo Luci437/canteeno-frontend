@@ -1,15 +1,23 @@
-import { Route, Routes } from "react-router";
+import { Route, Routes, useNavigate } from "react-router";
 import "./App.css";
 import { UserAuth } from "./Components/Auth/UserAuth";
-import { UseDeviceType } from "./Utils/UseDeviceType";
 import { AdminHome } from "./Components/Admin/AdminHome";
 import { Home } from "./Components/User/Home";
 import { CartHome } from "./Components/User/Cart/CartHome";
 import { UserProfile } from "./Components/User/UserProfile";
 import { OrderSuccess } from "./Components/User/Cart/OrderSuccess";
+import { useEffect } from "react";
 
 const App = () => {
-  UseDeviceType();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userToken = sessionStorage.getItem("userToken");
+    if (!userToken) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   return (
     <div className="App">
       <Routes>

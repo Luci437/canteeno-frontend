@@ -8,8 +8,13 @@ type ItemContainerProps = {
 };
 
 export const ItemContainer = ({ item }: ItemContainerProps) => {
+  console.log("item?.itemStock", item?.itemStock);
   return (
-    <div className="dish-container">
+    <div
+      className={`dish-container ${
+        item?.itemStock === null ? "disabled-container" : ""
+      }`}
+    >
       <div className="dish-container-sub">
         <h3 className="item-name">{item.name}</h3>
         <FoodType foodType="veg" />
@@ -24,7 +29,7 @@ export const ItemContainer = ({ item }: ItemContainerProps) => {
           src={item.imageUrls[0] ?? defaultImg}
           alt="default-img"
         />
-        <CartContainer className={"cart-container-home"} />
+        <CartContainer itemid={item.itemId} className={"cart-container-home"} />
       </div>
     </div>
   );

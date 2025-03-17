@@ -12,6 +12,15 @@ import { RootState } from "../../Common/Slices/Store";
 import { useDispatch } from "react-redux";
 import { setCart } from "../../Common/Slices/CartSlice";
 
+export type ItemStockType = {
+  availableQuantity: number;
+  isUnlimited: boolean;
+  itemId: number;
+  lastUpdatedAt?: string;
+  reservedQuantity: number;
+  totalQuantity: number;
+};
+
 export type GroupedItem = {
   itemId: number;
   name: string;
@@ -26,6 +35,7 @@ export type GroupedItem = {
   };
   createdAt: string;
   updatedAt: string;
+  itemStock?: ItemStockType;
 };
 
 type CategorizedItems = {
@@ -36,6 +46,9 @@ export const Home = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.user);
   const [itemList, setItemList] = useState<CategorizedItems[]>([]);
+  const cartItems = useSelector(
+    (state: RootState) => state.cart.cart?.cartItems || []
+  );
 
   const groupItemsByCategory = (items: ItemResponseType[]) => {
     let categorizedItems: CategorizedItems = {};
@@ -54,6 +67,7 @@ export const Home = () => {
           available: item.available,
           imageUrls: item.imageUrls,
           store: item.store,
+          itemStock: item.itemStock,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
         });
@@ -114,7 +128,7 @@ export const Home = () => {
           </>
         ))}
       </div>
-      <CartButton />
+      {cartItems?.length > 0 ? <CartButton /> : null}
     </div>
   );
 };

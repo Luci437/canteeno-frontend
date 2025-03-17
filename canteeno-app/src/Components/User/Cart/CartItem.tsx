@@ -1,16 +1,24 @@
-import { CartContainer } from "../CartContainer";
+import { CartContainer, CartItemType } from "../CartContainer";
 import { FoodType } from "../FoodType";
 
-export const CartItem = () => {
+type CartItemProps = {
+  item: CartItemType;
+};
+
+export const CartItem = ({ item }: CartItemProps) => {
   return (
     <div className="cart-item-container">
       <div className="cart-item-name">
-        <p>Aloo Paratha </p>
+        <p>{item.itemName}</p>
         <FoodType foodType="veg" />
       </div>
       <div className="cart-item-quantity">
-        <CartContainer className="cart-container-cart" qty={1} />
-        <p className="cart-item-price">₹ 50</p>
+        <CartContainer
+          className="cart-container-cart"
+          qty={item.quantity}
+          itemid={item.itemId}
+        />
+        <p className="cart-item-price">₹ {item.price}</p>
       </div>
     </div>
   );

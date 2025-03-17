@@ -1,4 +1,10 @@
-import { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Common/Slices/Store";
+import axiosInstance from "../../Utils/axiosConfig";
+import { setCart } from "../../Common/Slices/CartSlice";
+import { useDispatch } from "react-redux";
 
 export type CartItemType = {
   cartItemId: number;
@@ -33,13 +39,52 @@ export const CartContainer = ({
   qty,
   itemid,
 }: CartContainerProps) => {
+  const cartItems = useSelector(
+    (state: RootState) => state.cart.cart?.cartItems || []
+  );
+  const cartItemData = useSelector((state: RootState) => state.cart);
+  const userData = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+
   const [quantity, setQuantity] = useState(qty || 0);
+
+  useEffect(() => {
+    if (itemid) {
+      const item = cartItems.find((item) => item.itemId === itemid);
+
+      if (item) {
+        setQuantity(item.quantity);
+      }
+      if (cartItemData.cart?.cartItems.length === 0) {
+        setQuantity(0);
+      }
+    }
+  }, [cartItems, itemid]);
+
+  const updateCart = (itemQuantity: number) => {
+    axiosInstance
+      .post(`http://localhost:8080/api/cart/${userData.userId}/add`, {
+        itemId: itemid,
+        quantity: itemQuantity,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch(setCart(res.data));
+          if (res.data.cartItems.length === 0) {
+            setQuantity(0);
+          }
+        }
+      });
+  };
+
   const handleIncrement = () => {
     setQuantity(quantity + 1);
+    updateCart(quantity + 1);
   };
   const handleDecrement = () => {
     if (quantity > 0) {
       setQuantity(quantity - 1);
+      updateCart(quantity - 1);
     }
   };
 

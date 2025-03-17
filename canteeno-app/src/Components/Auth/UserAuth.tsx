@@ -52,7 +52,10 @@ export const UserAuth = () => {
       .then((res) => {
         if (res.status === 200) {
           dispatch(setUserData(res.data));
-          navigate("/");
+          sessionStorage.setItem("userToken", JSON.stringify(res.data.token));
+          if (res.data.role === "ADMIN") {
+            navigate("/admin");
+          } else navigate("/");
         }
         console.log(res);
       });
@@ -72,12 +75,6 @@ export const UserAuth = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(registerData.email)) {
       alert("Please enter a valid email address.");
-      return;
-    }
-
-    const phoneRegex = /^[6-9]\d{9}$/;
-    if (!phoneRegex.test(registerData.phoneNumber)) {
-      alert("Please enter a valid Indian phone number.");
       return;
     }
 

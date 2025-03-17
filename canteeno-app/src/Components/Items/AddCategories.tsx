@@ -1,5 +1,7 @@
 import { Button } from "../Common/Button";
 import { InputBox } from "../Common/Input";
+import axiosInstance from "../../Utils/axiosConfig";
+import { useEffect, useState } from "react";
 
 export type CategoryType = {
   categoryId: number;
@@ -12,16 +14,72 @@ export type CategoryType = {
 };
 
 export const AddCategories = () => {
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [categoryName, setCategoryName] = useState<string>("");
+  const [categoryDescription, setCategoryDescription] = useState<string>("");
+
+  const getCategoryList = () => {
+    axiosInstance
+      .get("http://localhost:8080/api/catalog/category")
+      .then((res) => {
+        if (res.status === 200) {
+          setCategories(res.data);
+        }
+      });
+    // Fetch category list from the server
+  };
+
+  useEffect(() => {
+    getCategoryList();
+  }, []);
+
+  const handleCategorySubmit = () => {
+    axiosInstance
+      .post("http://localhost:8080/api/catalog/category", {
+        name: categoryName,
+        description: categoryDescription,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          getCategoryList();
+          setCategoryName("");
+          setCategoryDescription("");
+        }
+      });
+  };
+
+  const handleDeleteCategory = (categoryId: number) => {
+    axiosInstance
+      .delete(`http://localhost:8080/api/catalog/category/${categoryId}`)
+      .then((res) => {
+        if (res.status === 204) {
+          getCategoryList();
+        }
+      });
+  };
+
   return (
     <>
       <div className="admin-content-entry-section">
         <div className="admin-content-entry-section-inner">
           <h2>Add Categories</h2>
           <div className="admin-content-entry-section-inner-form">
-            <InputBox placeholder="Add Categories Name" />
-            <InputBox placeholder="Add Categories Description" />
+            <InputBox
+              placeholder="Add Categories Name"
+              value={categoryName}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setCategoryName(e.target.value)
+              }
+            />
+            <InputBox
+              placeholder="Add Categories Description"
+              value={categoryDescription}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setCategoryDescription(e.target.value)
+              }
+            />
 
-            <Button value="SUMBIT" />
+            <Button value="SUMBIT" onClick={handleCategorySubmit} />
           </div>
         </div>
       </div>
@@ -36,46 +94,20 @@ export const AddCategories = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Aloo Paratha</td>
-              <td>Paratha with Aloo</td>
-
-              <td>
-                <Button value="Edit" />
-                <Button value="Delete" />
-              </td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aloo Paratha</td>
-              <td>Paratha with Aloo</td>
-
-              <td>
-                <Button value="Edit" />
-                <Button value="Delete" />
-              </td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aloo Paratha</td>
-              <td>Paratha with Aloo</td>
-
-              <td>
-                <Button value="Edit" />
-                <Button value="Delete" />
-              </td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aloo Paratha</td>
-              <td>Paratha with Aloo</td>
-
-              <td>
-                <Button value="Edit" />
-                <Button value="Delete" />
-              </td>
-            </tr>
+            {categories.map((category, index) => (
+              <tr key={category.categoryId}>
+                <td>{index + 1}</td>
+                <td>{category.name}</td>
+                <td>{category.description}</td>
+                <td>
+                  <Button value="Edit" />
+                  <Button
+                    value="Delete"
+                    onClick={() => handleDeleteCategory(category.categoryId)}
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

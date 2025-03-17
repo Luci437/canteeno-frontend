@@ -522,3 +522,47 @@ $Standard-radius: 0.5em;
 .qr-close-button:hover {
   background-color: #d9363e;
 }
+
+.disabled-container {
+  opacity: 0.5;
+  pointer-events: none;
+  img {
+    filter: grayscale(100%);
+  }
+}
+
+.admin-content-entry-section-inner-form-radio {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Creates spacing between elements */
+}
+
+.admin-content-entry-section-inner-form-radio label {
+  font-weight: 600;
+  color: #4a4a4a; /* Dark grey for better readability */
+  cursor: pointer;
+}
+
+.admin-content-entry-section-inner-form-radio input[type="radio"] {
+  appearance: none; /* Removes default styling */
+  width: 11px;
+  height: 11px;
+  border: 2px solid #e63946; /* Matches the red theme */
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.admin-content-entry-section-inner-form-radio
+  input[type="radio"]:checked::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-color: #e63946; /* Same red for consistency */
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers the dot */
+}

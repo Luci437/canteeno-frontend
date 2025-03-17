@@ -19,6 +19,12 @@ export const NavMenus = () => {
         Items
       </NavLink>
       <NavLink
+        to="/admin/addStock"
+        className={getActiveClass("/admin/addStock")}
+      >
+        Stock
+      </NavLink>
+      <NavLink
         to="/admin/addCategories"
         className={getActiveClass("/admin/addCategories")}
       >

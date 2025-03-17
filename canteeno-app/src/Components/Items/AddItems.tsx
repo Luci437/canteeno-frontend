@@ -28,38 +28,18 @@ export const AddItems = () => {
     categoryIds: [3, 4],
   });
   const [itemList, setItemList] = useState<ItemResponseType[]>([]);
-  const dummyCategory: CategoryType[] = [
-    {
-      categoryId: 1,
-      name: "Breakfast",
-      description:
-        "A variety of morning meal options including beverages, snacks, and traditional breakfast items.",
-      createdBy: "admin",
-      createdAt: "2025-03-13 13:25:42",
-      updatedBy: "admin",
-      updatedAt: "2025-03-13 07:55:43",
-    },
-    {
-      categoryId: 2,
-      name: "Lunch",
-      description:
-        "A selection of hearty meals, including rice, curries, bread, and side dishes, perfect for midday dining.",
-      createdBy: "admin",
-      createdAt: "2025-03-13 13:26:51",
-      updatedBy: "admin",
-      updatedAt: "2025-03-13 07:56:52",
-    },
-    {
-      categoryId: 3,
-      name: "Snacks",
-      description:
-        "Quick and light bites, including sandwiches, pastries, and fried items, ideal for short breaks.",
-      createdBy: "admin",
-      createdAt: "2025-03-13 13:27:12",
-      updatedBy: "admin",
-      updatedAt: "2025-03-13 07:57:13",
-    },
-  ];
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+
+  const getCategoryList = () => {
+    axiosInstance
+      .get("http://localhost:8080/api/catalog/category")
+      .then((res) => {
+        if (res.status === 200) {
+          setCategories(res.data);
+        }
+      });
+    // Fetch category list from the server
+  };
 
   const getItemList = () => {
     axiosInstance
@@ -112,6 +92,7 @@ export const AddItems = () => {
 
   useEffect(() => {
     getItemList();
+    getCategoryList();
   }, []);
   return (
     <>
@@ -145,7 +126,7 @@ export const AddItems = () => {
             />
 
             <DropdownList
-              options={dummyCategory.map((category) => ({
+              options={categories.map((category) => ({
                 id: category.categoryId,
                 label: category.name,
               }))}
