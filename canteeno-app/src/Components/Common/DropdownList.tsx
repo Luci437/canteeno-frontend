@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../Assets/Css/DropdownList.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
@@ -7,16 +7,29 @@ interface DropdownListProps {
   options: { id: number; label: string }[];
   placeholder?: string;
   onSelect: (option: number) => void;
+  value?: number | null;
 }
 
 const DropdownList: React.FC<DropdownListProps> = ({
   options,
   placeholder = "Select an option",
   onSelect,
+  value,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [selectedOption, setSelectedOption] = useState<string | null>(
+    value ? options.find((option) => option.id === value)?.label || null : null
+  );
+
+  useEffect(() => {
+    console.log(value);
+    if (value) {
+      setSelectedOption(
+        options.find((option) => option.id === value)?.label || null
+      );
+    }
+  }, [value, options]);
 
   const filteredOptions = options.filter((option) =>
     option.label.toLowerCase().includes(searchTerm.toLowerCase())
@@ -44,36 +57,38 @@ const DropdownList: React.FC<DropdownListProps> = ({
   }, []);
 
   return (
-    <div className="dropdown">
-      <div className="dropdown-header" onClick={() => setIsOpen(!isOpen)}>
-        {selectedOption || placeholder}
-        <span className={`dropdown-arrow ${isOpen ? "open" : ""}`}>
-          <FontAwesomeIcon icon={faAngleDown} />
-        </span>
-      </div>
-      {isOpen && (
-        <div className="dropdown-body">
-          <input
-            type="text"
-            className="dropdown-search"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <ul className="dropdown-list">
-            {filteredOptions.map((option, index) => (
-              <li
-                key={index}
-                className="dropdown-item"
-                onClick={() => handleSelect(option)}
-              >
-                {option.label}
-              </li>
-            ))}
-          </ul>
+    <>
+      <div className="dropdown">
+        <div className="dropdown-header" onClick={() => setIsOpen(!isOpen)}>
+          {selectedOption || placeholder}
+          <span className={`dropdown-arrow ${isOpen ? "open" : ""}`}>
+            <FontAwesomeIcon icon={faAngleDown} />
+          </span>
         </div>
-      )}
-    </div>
+        {isOpen && (
+          <div className="dropdown-body">
+            <input
+              type="text"
+              className="dropdown-search"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <ul className="dropdown-list">
+              {filteredOptions.map((option, index) => (
+                <li
+                  key={index}
+                  className="dropdown-item"
+                  onClick={() => handleSelect(option)}
+                >
+                  {option.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

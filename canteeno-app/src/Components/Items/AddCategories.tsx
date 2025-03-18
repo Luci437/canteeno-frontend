@@ -17,6 +17,8 @@ export const AddCategories = () => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [categoryName, setCategoryName] = useState<string>("");
   const [categoryDescription, setCategoryDescription] = useState<string>("");
+  const [isEdit, setIsEdit] = useState(false);
+  const [editingCategoryId, setEditingCategoryId] = useState<number | null>();
 
   const getCategoryList = () => {
     axiosInstance
@@ -34,6 +36,24 @@ export const AddCategories = () => {
   }, []);
 
   const handleCategorySubmit = () => {
+    if (isEdit) {
+      axiosInstance
+        .put(`http://localhost:8080/api/catalog/category`, {
+          categoryId: editingCategoryId,
+          name: categoryName,
+          description: categoryDescription,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            getCategoryList();
+            setCategoryName("");
+            setCategoryDescription("");
+            setIsEdit(false);
+            setEditingCategoryId(null);
+          }
+        });
+      return;
+    }
     axiosInstance
       .post("http://localhost:8080/api/catalog/category", {
         name: categoryName,
@@ -54,6 +74,19 @@ export const AddCategories = () => {
       .then((res) => {
         if (res.status === 204) {
           getCategoryList();
+        }
+      });
+  };
+
+  const handleUpdateCategory = (categoryId: number) => {
+    axiosInstance
+      .get(`http://localhost:8080/api/catalog/category/${categoryId}`)
+      .then((res) => {
+        if (res.status === 200) {
+          setCategoryName(res.data.name);
+          setCategoryDescription(res.data.description);
+          setIsEdit(true);
+          setEditingCategoryId(categoryId);
         }
       });
   };
@@ -100,7 +133,10 @@ export const AddCategories = () => {
                 <td>{category.name}</td>
                 <td>{category.description}</td>
                 <td>
-                  <Button value="Edit" />
+                  <Button
+                    value="Edit"
+                    onClick={() => handleUpdateCategory(category.categoryId)}
+                  />
                   <Button
                     value="Delete"
                     onClick={() => handleDeleteCategory(category.categoryId)}

@@ -19,6 +19,8 @@ export const AddStore = () => {
   const [storeName, setStoreName] = useState<string>("");
   const [storeLocation, setStoreLocation] = useState<string>("");
   const [storeContact, setStoreContact] = useState<string>("");
+  const [isEdit, setIsEdit] = useState(false);
+  const [editingStoreId, setEditingStoreId] = useState<number | null>();
 
   const getStoreList = () => {
     // Fetch store list from the server
@@ -39,6 +41,26 @@ export const AddStore = () => {
   }, []);
 
   const handleStoreSubmit = () => {
+    if (isEdit) {
+      axiosInstance
+        .put(`http://localhost:8080/api/catalog/store`, {
+          storeId: editingStoreId,
+          name: storeName,
+          location: storeLocation,
+          contactInfo: storeContact,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            getStoreList();
+            setStoreName("");
+            setStoreLocation("");
+            setStoreContact("");
+            setIsEdit(false);
+            setEditingStoreId(null);
+          }
+        });
+      return;
+    }
     axiosInstance
       .post("http://localhost:8080/api/catalog/store", {
         name: storeName,
@@ -61,6 +83,20 @@ export const AddStore = () => {
       .then((res) => {
         if (res.status === 204) {
           getStoreList();
+        }
+      });
+  };
+
+  const handleStoreUpdate = (storeId: number) => {
+    axiosInstance
+      .get(`http://localhost:8080/api/catalog/store/${storeId}`)
+      .then((res) => {
+        if (res.status === 200) {
+          setStoreName(res.data.name);
+          setStoreLocation(res.data.location);
+          setStoreContact(res.data.contactInfo);
+          setIsEdit(true);
+          setEditingStoreId(storeId);
         }
       });
   };
@@ -116,7 +152,10 @@ export const AddStore = () => {
                 <td>{store.location}</td>
                 <td>{store.contactInfo}</td>
                 <td>
-                  <Button value="Edit" />
+                  <Button
+                    value="Edit"
+                    onClick={() => handleStoreUpdate(store.storeId)}
+                  />
                   <Button
                     value="Delete"
                     onClick={() => handleDeleteStore(store.storeId)}

@@ -33,6 +33,11 @@ const initialState: CartState = {
 const cartSlice = createSlice({
   name: "cart",
   initialState,
+  extraReducers: (builder) => {
+    builder.addCase("persist/PURGE", (state) => {
+      state.cart = initialState.cart;
+    });
+  },
   reducers: {
     setCart(state, action: PayloadAction<CartType>) {
       state.cart = action.payload;

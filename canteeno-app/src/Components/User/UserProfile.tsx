@@ -1,30 +1,61 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLeftLong, faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import { NavLink } from "react-router";
-
-const orders = [
-  { id: "ORD123", items: ["Pizza", "Burger", "Pasta"] },
-  { id: "ORD456", items: ["Sushi", "Ramen"] },
-  { id: "ORD789", items: ["Salad", "Smoothie"] },
-];
+import { NavLink, useNavigate } from "react-router";
+import { useSelector } from "react-redux";
+import { persistor, RootState } from "../../Common/Slices/Store";
+import axiosInstance from "../../Utils/axiosConfig";
+import { OrderItemType, OrderType } from "../Orders/OrderItem";
 
 export const UserProfile = () => {
+  const userData = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
+
   const [activeTab, setActiveTab] = useState("profile");
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderType>();
+  const [orderList, setOrderList] = useState<OrderType[]>([]);
+
+  const getOrderList = () => {
+    // API call to fetch orders
+    axiosInstance
+      .get(`http://localhost:8080/api/order/user/${userData.userId}`)
+      .then((response) => {
+        console.log(response.data);
+        if (response.status === 200) {
+          setOrderList(response.data);
+        }
+      });
+  };
+
+  useEffect(() => {
+    getOrderList();
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
-      case "profile":
-        return <p>User Info: John Doe | johndoe@gmail.com</p>;
-
+      case "Logout":
+        sessionStorage.removeItem("userToken");
+        persistor.purge();
+        navigate("/login");
+        return;
       case "orders":
         return (
           <div className="order-list">
-            {orders.map((order) => (
-              <button key={order.id} onClick={() => setSelectedOrder(order)}>
-                Order ID: {order.id}
+            {orderList.map((order) => (
+              <button
+                key={order.orderId}
+                onClick={() => setSelectedOrder(order)}
+                className="order-button"
+              >
+                <div className="order-id">Order #: {order.orderId}</div>
+                <div className="order-details">
+                  <span>{order.orderItems.length} items</span>
+                  <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                  <span className="order-amount">
+                    ${order.amount.toFixed(2)}
+                  </span>
+                </div>
               </button>
             ))}
           </div>
@@ -42,8 +73,12 @@ export const UserProfile = () => {
         </NavLink>
       </div>
       <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
+      <div className="user-info-container">
+        <h2>{userData.name}</h2>
+        <p>{userData.email}</p>
+      </div>
       <div className="tabs">
-        {["profile", "orders"].map((tab) => (
+        {["profile", "orders", "Logout"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -58,17 +93,22 @@ export const UserProfile = () => {
       {selectedOrder && (
         <div className="popup">
           <div className="popup-content">
-            <QRCodeCanvas value={selectedOrder.id} size={150} />
+            <QRCodeCanvas value={selectedOrder.orderId.toString()} size={150} />
             <div>
               <h3>Items Booked:</h3>
               <ul>
-                {selectedOrder.items.map((item: string, index: number) => (
+                {/* {selectedOrder.orderItems.map((item: string, index: number) => (
                   <li key={index}>{item}</li>
+                ))} */}
+                {selectedOrder.orderItems.map((item: OrderItemType) => (
+                  <li key={item.orderItemId}>
+                    {item.itemName} x{item.quantity}
+                  </li>
                 ))}
               </ul>
               <button
                 className="close-btn"
-                onClick={() => setSelectedOrder(null)}
+                onClick={() => setSelectedOrder(undefined)}
               >
                 Close
               </button>

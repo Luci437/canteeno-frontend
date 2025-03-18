@@ -5,7 +5,6 @@ import { Button } from "../Common/Button";
 import { InputBox } from "../Common/Input";
 import { ItemResponseType } from "../../Types/APITypes";
 import DropdownList from "../Common/DropdownList";
-import { g, i, l } from "react-router/dist/development/fog-of-war-CvttGpNz";
 
 export const StockHome = () => {
   const [items, setItems] = useState<ItemResponseType[]>([]);
@@ -61,6 +60,7 @@ export const StockHome = () => {
                 id: data.itemId,
                 label: data.name,
               }))}
+              value={selectedItem}
               onSelect={(id: number) => findCurrentItemStock(id)}
               placeholder="Select Item"
             />
@@ -121,7 +121,6 @@ export const StockHome = () => {
                 <td>{item?.itemStock?.availableQuantity}</td>
 
                 <td>
-                  <Button value="Edit" />
                   <Button value="Delete" onClick={() => {}} />
                 </td>
               </tr>

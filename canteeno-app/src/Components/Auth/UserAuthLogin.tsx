@@ -6,9 +6,7 @@ export const UserAuthLogin = () => {
   const { name, email, phoneNumber } = useSelector(
     (state: RootState) => state.user
   );
-  const { isMobile } = useSelector(
-    (state: RootState) => state.device.deviceStateInitial
-  );
+
   return (
     <div className="">
       <h2>Login</h2>

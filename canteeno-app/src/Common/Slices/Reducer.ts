@@ -1,12 +1,14 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import userReducer from "./UserSlice";
-import deviceReducer from "./DeviceSlice";
 import cartReducer from "./CartSlice";
+import loadingReducer from "./LoadingSlice";
+import errorMessageReducer from "./ErrorMessage";
 
 const rootReducer = combineReducers({
   user: userReducer,
-  device: deviceReducer,
   cart: cartReducer,
+  loading: loadingReducer,
+  errorMessage: errorMessageReducer,
   // Add your reducers here
 });
 

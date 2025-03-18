@@ -13,7 +13,7 @@ export type ItemDataType = {
   price: string;
   available: boolean;
   storeId: number;
-  categoryIds: number[];
+  categories: CategoryType[];
   image: File | null;
 };
 
@@ -25,10 +25,13 @@ export const AddItems = () => {
     image: null,
     available: true,
     storeId: 1,
-    categoryIds: [3, 4],
+    categories: [],
   });
   const [itemList, setItemList] = useState<ItemResponseType[]>([]);
   const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [isEdit, setIsEdit] = useState(false);
+  const [editingImageURL, setEditingImageURL] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
   const getCategoryList = () => {
     axiosInstance
@@ -53,12 +56,47 @@ export const AddItems = () => {
   };
 
   const handleAddItem = () => {
-    const itemDataBlob = new Blob([JSON.stringify(itemData)], {
+    const updatedItemData = {
+      ...itemData,
+      categoryIds: selectedCategory ? [selectedCategory] : [],
+    };
+    const itemDataBlob = new Blob([JSON.stringify(updatedItemData)], {
       type: "application/json",
     });
     const formData = new FormData();
     formData.append("request", itemDataBlob);
     formData.append("images", itemData.image!);
+
+    if (isEdit) {
+      // Update item details
+      axiosInstance
+        .putForm(`http://localhost:8080/api/catalog/item`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            getItemList();
+            setIsEdit(false);
+            setItemData({
+              name: "",
+              description: "",
+              price: "",
+              image: null,
+              available: true,
+              storeId: 1,
+              categories: [],
+            });
+            setSelectedCategory(null);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      return;
+    }
 
     axiosInstance
       .postForm("http://localhost:8080/api/catalog/item", formData, {
@@ -69,6 +107,16 @@ export const AddItems = () => {
       .then((res) => {
         if (res.status === 200) {
           getItemList();
+          setItemData({
+            name: "",
+            description: "",
+            price: "",
+            image: null,
+            available: true,
+            storeId: 1,
+            categories: [],
+          });
+          setSelectedCategory(null);
         }
       })
       .catch((err) => {
@@ -94,6 +142,22 @@ export const AddItems = () => {
     getItemList();
     getCategoryList();
   }, []);
+
+  const handleUpdateItem = (itemId: number) => {
+    // Update item details
+
+    axiosInstance
+      .get(`http://localhost:8080/api/catalog/item/${itemId}`)
+      .then((res) => {
+        setEditingImageURL(res.data.imageUrls[0]);
+        setItemData(res.data);
+        setIsEdit(true);
+      });
+  };
+
+  console.log("itemData", itemData);
+  console.log("itemList", itemData.categories);
+
   return (
     <>
       <div className="admin-content-entry-section">
@@ -130,10 +194,21 @@ export const AddItems = () => {
                 id: category.categoryId,
                 label: category.name,
               }))}
-              onSelect={() => {}}
+              onSelect={(id: number) => {
+                setSelectedCategory(id);
+              }}
               placeholder="Select Category"
+              value={itemData?.categories?.[0]?.categoryId || 0}
             />
 
+            {isEdit && (
+              <img
+                src={editingImageURL}
+                alt="Item"
+                style={{ width: "100px", height: "100px" }}
+                className="image-preview"
+              />
+            )}
             <InputBox
               placeholder="Add Item Image"
               type="file"
@@ -172,7 +247,10 @@ export const AddItems = () => {
                   </a>
                 </td>
                 <td>
-                  <Button value="Edit" />
+                  <Button
+                    value="Edit"
+                    onClick={() => handleUpdateItem(item.itemId)}
+                  />
                   <Button
                     value="Delete"
                     onClick={() => handleItemDelete(item.itemId)}

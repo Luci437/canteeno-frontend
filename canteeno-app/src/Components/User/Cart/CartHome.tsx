@@ -3,8 +3,9 @@ import { CartItem } from "./CartItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../Common/Slices/Store";
+import { persistor, RootState } from "../../../Common/Slices/Store";
 import { useEffect } from "react";
+import axiosInstance from "../../../Utils/axiosConfig";
 
 export const CartHome = () => {
   const navigate = useNavigate();
@@ -18,7 +19,15 @@ export const CartHome = () => {
   }, [cartData]);
 
   const handlePlaceOrder = () => {
-    navigate("/order-success");
+    axiosInstance
+      .post(`http://localhost:8080/api/cart/${cartData?.userId}/checkout`)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res);
+          persistor.purge();
+          navigate("/order-success");
+        }
+      });
   };
 
   return (

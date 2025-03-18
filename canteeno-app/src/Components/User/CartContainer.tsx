@@ -55,7 +55,8 @@ export const CartContainer = ({
       if (item) {
         setQuantity(item.quantity);
       }
-      if (cartItemData.cart?.cartItems.length === 0) {
+
+      if (cartItemData.cart?.cartItems?.length === 0 || !item) {
         setQuantity(0);
       }
     }

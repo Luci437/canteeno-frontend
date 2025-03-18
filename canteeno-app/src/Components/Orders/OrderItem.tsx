@@ -1,30 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../Common/Button";
-import { OrderListedItems } from "./OrderListedItems";
+import axiosInstance from "../../Utils/axiosConfig";
 
-const sampleOrders = [
-  {
-    id: 1,
-    orderName: "Order 1",
-    orderDate: "12/12/2021",
-    status: "Delivered",
-    items: ["Pizza", "Burger", "Pasta"],
-  },
-  {
-    id: 2,
-    orderName: "Order 2",
-    orderDate: "15/01/2022",
-    status: "Pending",
-    items: ["Sushi", "Ramen"],
-  },
-];
+export type OrderItemType = {
+  orderItemId: number;
+  itemId: number;
+  itemName: string;
+  quantity: number;
+  price: number;
+};
+
+export type OrderType = {
+  orderId: number;
+  orderNo: string;
+  userId: number;
+  amount: number;
+  qrCodeUrl: string;
+  orderStatus: "PENDING" | "COMPLETED" | "CANCELLED"; // Add more statuses if required
+  createdAt: string;
+  updatedAt: string;
+  orderItems: OrderItemType[];
+};
 
 export const OrderItem = () => {
   const [expandedOrder, setExpandedOrder] = useState(0);
+  const [orderList, setOrderList] = useState<OrderType[]>([]);
 
   const toggleOrderItems = (orderId: number) => {
     setExpandedOrder(expandedOrder === orderId ? 0 : orderId);
   };
+
+  const getOrderItems = () => {
+    axiosInstance.get("http://localhost:8080/api/order/pending").then((res) => {
+      if (res.status === 200) {
+        setOrderList(res.data);
+      }
+    });
+  };
+
+  useEffect(() => {
+    getOrderItems();
+  }, []);
 
   return (
     <div className="order-item-container">
@@ -40,30 +56,33 @@ export const OrderItem = () => {
             </tr>
           </thead>
           <tbody>
-            {sampleOrders.map((order) => (
+            {orderList.map((order, index) => (
               <>
-                <tr key={order.id}>
-                  <td>{order.id}</td>
+                <tr key={order.orderId}>
+                  <td>{index + 1}</td>
                   <td
                     className="hover-order"
-                    onClick={() => toggleOrderItems(order.id)}
+                    onClick={() => toggleOrderItems(order.orderId)}
                     style={{ cursor: "pointer" }}
                   >
-                    {order.orderName}
+                    {order.orderId}
                   </td>
-                  <td>{order.orderDate}</td>
-                  <td>{order.status}</td>
+                  <td>{order.createdAt}</td>
+                  <td>{order.amount}</td>
                   <td>
-                    <Button value="Delete" />
+                    <Button value="COMPLETED" />
                   </td>
                 </tr>
-                {expandedOrder === order.id && (
+                {expandedOrder === order.orderId && (
                   <tr className="order-details-row">
                     <td colSpan={2}></td>
                     <td colSpan={2}>
-                      <tr>
-                        <td>🍕 Pizza - 2 Qty</td>
-                        <td>🍔 Burger - 1 Qty</td>
+                      <tr key={index}>
+                        {order.orderItems.map((orderItem, index) => (
+                          <td key={index}>
+                            {orderItem.itemName} - {orderItem.quantity} Qty
+                          </td>
+                        ))}
                       </tr>
                     </td>
                   </tr>

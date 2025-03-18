@@ -49,6 +49,7 @@ export const Home = () => {
   const cartItems = useSelector(
     (state: RootState) => state.cart.cart?.cartItems || []
   );
+  const [storeName, setStoreName] = useState("");
 
   const groupItemsByCategory = (items: ItemResponseType[]) => {
     let categorizedItems: CategorizedItems = {};
@@ -58,6 +59,7 @@ export const Home = () => {
         if (!categorizedItems[category.name]) {
           categorizedItems[category.name] = [];
         }
+        setStoreName(item.store.name);
 
         categorizedItems[category.name].push({
           itemId: item.itemId,
@@ -110,7 +112,10 @@ export const Home = () => {
   return (
     <div className="home-container">
       <span className="home-container-span">
-        <h1 className="site-title-name">Canteeno</h1>
+        <h1 className="site-title-name">
+          Canteeno
+          <span className="site-title-store-name">{storeName}</span>
+        </h1>
         <NavLink to={"/user"} className="site-profie">
           <FontAwesomeIcon icon={faUser} /> {} {userData.name}
         </NavLink>
