@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import "../../Assets/Css/DropdownList.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { CategoryListType } from "../Items/AddItems";
 
 interface DropdownListProps {
-  options: { id: number; label: string }[];
+  options: CategoryListType[];
   placeholder?: string;
-  onSelect: (option: number) => void;
+  onSelect: (option: CategoryListType) => void;
   value?: number | null;
 }
 
@@ -23,11 +24,12 @@ const DropdownList: React.FC<DropdownListProps> = ({
   );
 
   useEffect(() => {
-    console.log(value);
     if (value) {
       setSelectedOption(
         options.find((option) => option.id === value)?.label || null
       );
+    } else {
+      setSelectedOption(null);
     }
   }, [value, options]);
 
@@ -38,7 +40,7 @@ const DropdownList: React.FC<DropdownListProps> = ({
   const handleSelect = (option: { id: number; label: string }) => {
     setSelectedOption(option.label);
 
-    onSelect(option.id);
+    onSelect(option);
     setIsOpen(false);
   };
 

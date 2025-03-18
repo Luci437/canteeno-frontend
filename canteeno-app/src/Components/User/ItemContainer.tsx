@@ -30,6 +30,7 @@ export const ItemContainer = ({ item }: ItemContainerProps) => {
     >
       <div className="dish-container-sub">
         <h3 className="item-name">{item.name}</h3>
+        <p className="item-description">{item.description}</p>
         <FoodType foodType="veg" />
         <div className="price">
           <span className="currency">₹</span>

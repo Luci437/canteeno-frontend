@@ -5,6 +5,7 @@ import { Button } from "../Common/Button";
 import { InputBox } from "../Common/Input";
 import { ItemResponseType } from "../../Types/APITypes";
 import DropdownList from "../Common/DropdownList";
+import { CategoryListType } from "../Items/AddItems";
 
 export const StockHome = () => {
   const [items, setItems] = useState<ItemResponseType[]>([]);
@@ -61,7 +62,9 @@ export const StockHome = () => {
                 label: data.name,
               }))}
               value={selectedItem}
-              onSelect={(id: number) => findCurrentItemStock(id)}
+              onSelect={(categoryList: CategoryListType) =>
+                findCurrentItemStock(categoryList.id)
+              }
               placeholder="Select Item"
             />
 

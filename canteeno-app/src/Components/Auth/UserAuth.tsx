@@ -40,10 +40,10 @@ export const UserAuth = () => {
 
   const handleLogin = () => {
     const loginData = {
-      email: registerData?.email,
+      username: registerData?.email,
       password: registerData?.password,
     };
-    if (!loginData.email || !loginData.password) {
+    if (!loginData.username || !loginData.password) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -104,7 +104,7 @@ export const UserAuth = () => {
               id="email"
               name="email"
               required
-              placeholder="email"
+              placeholder="email or Phone number"
               value={registerData?.email}
               onChange={handleInputChange}
             />

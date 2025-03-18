@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Common/Slices/Store";
 import axiosInstance from "../../Utils/axiosConfig";
@@ -42,6 +42,7 @@ export const CartContainer = ({
   const cartItems = useSelector(
     (state: RootState) => state.cart.cart?.cartItems || []
   );
+
   const cartItemData = useSelector((state: RootState) => state.cart);
   const userData = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
@@ -60,7 +61,7 @@ export const CartContainer = ({
         setQuantity(0);
       }
     }
-  }, [cartItems, itemid]);
+  }, [cartItemData]);
 
   const updateCart = (itemQuantity: number) => {
     axiosInstance

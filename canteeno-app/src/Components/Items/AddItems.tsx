@@ -6,6 +6,7 @@ import { InputBox } from "../Common/Input";
 import { ItemResponseType } from "../../Types/APITypes";
 import DropdownList from "../Common/DropdownList";
 import { CategoryType } from "./AddCategories";
+import { CategoryContainer } from "./CategoryContainer";
 
 export type ItemDataType = {
   name: string;
@@ -15,6 +16,11 @@ export type ItemDataType = {
   storeId: number;
   categories: CategoryType[];
   image: File | null;
+};
+
+export type CategoryListType = {
+  id: number;
+  label: string;
 };
 
 export const AddItems = () => {
@@ -31,7 +37,9 @@ export const AddItems = () => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [isEdit, setIsEdit] = useState(false);
   const [editingImageURL, setEditingImageURL] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedCategoryList, setSelectedCategoryList] = useState<
+    CategoryListType[] | null
+  >(null);
 
   const getCategoryList = () => {
     axiosInstance
@@ -58,7 +66,7 @@ export const AddItems = () => {
   const handleAddItem = () => {
     const updatedItemData = {
       ...itemData,
-      categoryIds: selectedCategory ? [selectedCategory] : [],
+      categoryIds: selectedCategoryList?.map((category) => category.id),
     };
     const itemDataBlob = new Blob([JSON.stringify(updatedItemData)], {
       type: "application/json",
@@ -89,7 +97,7 @@ export const AddItems = () => {
               storeId: 1,
               categories: [],
             });
-            setSelectedCategory(null);
+            setSelectedCategoryList(null);
           }
         })
         .catch((err) => {
@@ -116,7 +124,7 @@ export const AddItems = () => {
             storeId: 1,
             categories: [],
           });
-          setSelectedCategory(null);
+          setSelectedCategoryList(null);
         }
       })
       .catch((err) => {
@@ -155,8 +163,14 @@ export const AddItems = () => {
       });
   };
 
-  console.log("itemData", itemData);
-  console.log("itemList", itemData.categories);
+  const handleRemoveCategory = (categoryId: number) => {
+    setSelectedCategoryList((prev) => {
+      if (prev) {
+        return prev.filter((category) => category.id !== categoryId);
+      }
+      return null;
+    });
+  };
 
   return (
     <>
@@ -189,13 +203,30 @@ export const AddItems = () => {
               }}
             />
 
+            <CategoryContainer
+              categoryList={selectedCategoryList}
+              removeCategory={handleRemoveCategory}
+            />
+
             <DropdownList
               options={categories.map((category) => ({
                 id: category.categoryId,
                 label: category.name,
               }))}
-              onSelect={(id: number) => {
-                setSelectedCategory(id);
+              onSelect={(categoryList: CategoryListType) => {
+                if (
+                  selectedCategoryList?.some(
+                    (category) => category.id === categoryList.id
+                  )
+                ) {
+                  return;
+                }
+                setSelectedCategoryList((prev) => {
+                  if (prev) {
+                    return [...prev, categoryList];
+                  }
+                  return [categoryList];
+                });
               }}
               placeholder="Select Category"
               value={itemData?.categories?.[0]?.categoryId || 0}
